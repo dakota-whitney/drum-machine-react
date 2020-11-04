@@ -21,11 +21,9 @@ class App extends React.Component {
       activeDrum: {},
       padStyle: inactiveStyle,
       keyPressed: '',
-      padClicked: ''
     }
     this.handleKeydown = this.handleKeydown.bind(this)
     this.setInactiveStyle = this.setInactiveStyle.bind(this)
-    this.playSound = this.playSound.bind(this)
     this.handleClick = this.handleClick.bind(this)
   }
   componentDidMount(){
@@ -49,7 +47,8 @@ class App extends React.Component {
         padStyle: activeStyle,
         activeDrum: drumKeyMap[drumIndex]
       })
-      this.playSound();
+      let audio = document.getElementById(this.state.keyPressed)
+      audio.play();
       setTimeout(() => this.setInactiveStyle(),100);
     }
   }
@@ -70,13 +69,8 @@ class App extends React.Component {
         padStyle: inactiveStyle
       })
   }
-  playSound(){
-    let audio = document.getElementById(this.state.keyPressed)
-    console.log(audio)
-    audio.play();
-  }
   render() {
-    const display = this.state.activeDrum.drumSound
+    const display = this.state.activeDrum.drumSound;
     return (
       <div id="drum-machine">
       <DrumPads activeDrum={this.state.activeDrum} handleClick={this.handleClick} style={this.state.padStyle}/>
