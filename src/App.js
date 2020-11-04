@@ -18,12 +18,15 @@ class App extends React.Component {
   constructor(props){
     super(props)
     this.state = {
-      kbKeys: ["Q","W","E","A","S","D","Z","X","C"],
+      activeDrum: {},
+      padStyle: inactiveStyle,
       keyPressed: '',
-      padStyle: inactiveStyle
+      padClicked: ''
     }
     this.handleKeydown = this.handleKeydown.bind(this)
     this.setInactiveStyle = this.setInactiveStyle.bind(this)
+    this.playSound = this.playSound.bind(this)
+    this.handleClick = this.handleClick.bind(this)
   }
   componentDidMount(){
     const fccScript = document.createElement("script");
@@ -32,6 +35,7 @@ class App extends React.Component {
     document.body.appendChild(fccScript);
 
     document.addEventListener('keydown', this.handleKeydown)
+    document.addEventListener('click',this.handleClick)
   }
   componentWillUnmount(){
     document.removeEventListener('keydown', this.handleKeydown)
@@ -40,32 +44,43 @@ class App extends React.Component {
     let drumIndex = drumKeyMap.findIndex(drum => drum.keyCode === e.code)
     if(drumIndex !== -1){
       this.setState({
-        keyPressed: drumKeyMap[drumIndex].kbKey,
+        keyPressed: drumKeyMap[drumIndex],
         padStyle: activeStyle,
+        activeDrum: drumKeyMap[drumKeyMap.findIndex(drum => drum.keyCode === e.code)]
       })
-    } else{
-    this.setState({
-      keyPressed: '',
-      padStyle: activeStyle,
-    })
+      this.playSound();
+      setTimeout(() => this.setInactiveStyle(),100);
+    }
+    console.log(drumKeyMap.findIndex(drum => drum.keyCode === e.code))
   }
-    setTimeout(() => this.setInactiveStyle(),100);
-    console.log(e.code);
+  handleClick(e){
+    let drumIndex = drumKeyMap.findIndex(drum => drum.drumSound === e.target.id)
+    console.log(drumIndex)
+    /*if(drumIndex !== -1){
+      this.setState({
+        padStyle: activeStyle,
+        activeDrum: drumKeyMap[drumIndex],
+        padClicked: drumKeyMap[drumIndex].drumSound
+      })
+      this.playSound();
+      setTimeout(() => this.setInactiveStyle(),100);
+    }*/
   }
   setInactiveStyle(){
       this.setState({
         padStyle: inactiveStyle
       })
   }
+  playSound(){
+    const audio = document.getElementById(this.state.activeDrum.kbKey)
+    audio.play();
+  }
   render() {
-    let display = ""
-    if(this.state.keyPressed !== ""){
-      display = drumKeyMap[drumKeyMap.findIndex(drum => drum.kbKey === this.state.keyPressed)].drumSound
-    }
+    const display = this.state.activeDrum.drumSound
     return (
       <div id="drum-machine">
-      <DrumPads keyPressed={this.state.keyPressed} kbKeys={this.state.kbKeys} style={this.state.padStyle}/>
-      <Display keyPressed={this.state.keyPressed} display={display}/>
+      <DrumPads activeDrum={this.state.activeDrum} handleClick={this.handleClick} style={this.state.padStyle}/>
+      <Display activeDrum={this.state.activeDrum} display={display}/>
       </div>
     );
   }
@@ -74,18 +89,13 @@ class App extends React.Component {
 class DrumPads extends React.Component {
   constructor(props){
     super(props)
-    this.playSound = this.playSound.bind(this)
-  }
-  playSound(){
-    
   }
   render(){
-    const drumPads = this.props.kbKeys.map((kbKey, i) => {
-      if(this.props.keyPressed === kbKey){
-        return <div key={i} id={drumKeyMap[drumKeyMap.findIndex(drum => drum.kbKey === kbKey)].drumSound} className="drum-pad" style={this.props.style}>{kbKey}</div>
-      } else {
-        return <div key={i} id={drumKeyMap[drumKeyMap.findIndex(drum => drum.kbKey === kbKey)].drumSound} className="drum-pad" style={inactiveStyle}>{kbKey}</div>
-      }
+    const drumPads = drumKeyMap.map((drum, i) => {
+       return <div key={i} id={drum.drumSound} className="drum-pad" style={this.props.style} onClick={this.props.handleClick}>
+          <audio src={drum.source} id={drum.kbKey} className="clip" />
+                 {drum.kbKey}
+        </div>
     })
     return (
       <div id="drum-pads">
@@ -113,46 +123,55 @@ const drumKeyMap = [
     kbKey: "Q",
     keyCode: "KeyQ",
     drumSound: "ride-cymbal",
+    source: "https://raw.githubusercontent.com/dakota-whitney/drum-machine-react/main/public/ride-cymbal.wav"
   },
   {
     kbKey: "W",
     keyCode: "KeyW",
     drumSound: "small-crash",
+    source: "https://raw.githubusercontent.com/dakota-whitney/drum-machine-react/main/public/small-crash.wav"
   },
   {
     kbKey: "E",
     keyCode: "KeyE",
-    drumSound: "big-crash"
+    drumSound: "big-crash",
+    source: "https://raw.githubusercontent.com/dakota-whitney/drum-machine-react/main/public/big-crash.wav"
   },
   {
     kbKey: "A",
     keyCode: "KeyA",
-    drumSound: "closed-hihat"
+    drumSound: "closed-hihat",
+    source: "https://raw.githubusercontent.com/dakota-whitney/drum-machine-react/main/public/closed-hihat.wav"
   },
   {
     kbKey: "S",
     keyCode: "KeyS",
-    drumSound: "snare-drum"
+    drumSound: "snare-drum",
+    source: "https://raw.githubusercontent.com/dakota-whitney/drum-machine-react/main/public/snare-drum.wav"
   },
   {
     kbKey: "D",
     keyCode: "KeyD",
-    drumSound: "left-tom"
+    drumSound: "left-tom",
+    source: "https://raw.githubusercontent.com/dakota-whitney/drum-machine-react/main/public/left-tom.wav"
   },
   {
     kbKey: "Z",
     keyCode: "KeyZ",
-    drumSound: "open-hihat"
+    drumSound: "open-hihat",
+    source: "https://raw.githubusercontent.com/dakota-whitney/drum-machine-react/main/public/open-hihat.wav"
   },
   {
     kbKey: "X",
     keyCode: "KeyX",
-    drumSound: "bass-drum"
+    drumSound: "bass-drum",
+    source: "https://raw.githubusercontent.com/dakota-whitney/drum-machine-react/main/public/bass-drum.wav"
   },
   {
     kbKey: "C",
     keyCode: "KeyC",
-    drumSound: "right-tom"
+    drumSound: "right-tom",
+    source: "https://raw.githubusercontent.com/dakota-whitney/drum-machine-react/main/public/right-tom.wav"
   }
 ]
 
