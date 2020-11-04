@@ -39,32 +39,31 @@ class App extends React.Component {
   }
   componentWillUnmount(){
     document.removeEventListener('keydown', this.handleKeydown)
+    document.addEventListener('click',this.handleClick)
   }
   handleKeydown(e){
     let drumIndex = drumKeyMap.findIndex(drum => drum.keyCode === e.code)
     if(drumIndex !== -1){
       this.setState({
-        keyPressed: drumKeyMap[drumIndex],
+        keyPressed: drumKeyMap[drumIndex].kbKey,
         padStyle: activeStyle,
-        activeDrum: drumKeyMap[drumKeyMap.findIndex(drum => drum.keyCode === e.code)]
+        activeDrum: drumKeyMap[drumIndex]
       })
       this.playSound();
       setTimeout(() => this.setInactiveStyle(),100);
     }
-    console.log(drumKeyMap.findIndex(drum => drum.keyCode === e.code))
   }
   handleClick(e){
     let drumIndex = drumKeyMap.findIndex(drum => drum.drumSound === e.target.id)
-    console.log(drumIndex)
-    /*if(drumIndex !== -1){
+    if(drumIndex !== -1){
       this.setState({
         padStyle: activeStyle,
-        activeDrum: drumKeyMap[drumIndex],
-        padClicked: drumKeyMap[drumIndex].drumSound
+        activeDrum: drumKeyMap[drumIndex]
       })
-      this.playSound();
+      let audio = document.getElementById(drumKeyMap[drumIndex].kbKey);
+      audio.play();
       setTimeout(() => this.setInactiveStyle(),100);
-    }*/
+    }
   }
   setInactiveStyle(){
       this.setState({
@@ -72,7 +71,8 @@ class App extends React.Component {
       })
   }
   playSound(){
-    const audio = document.getElementById(this.state.activeDrum.kbKey)
+    let audio = document.getElementById(this.state.keyPressed)
+    console.log(audio)
     audio.play();
   }
   render() {
@@ -92,10 +92,17 @@ class DrumPads extends React.Component {
   }
   render(){
     const drumPads = drumKeyMap.map((drum, i) => {
+      if(drum.kbKey === this.props.activeDrum.kbKey){
        return <div key={i} id={drum.drumSound} className="drum-pad" style={this.props.style} onClick={this.props.handleClick}>
           <audio src={drum.source} id={drum.kbKey} className="clip" />
                  {drum.kbKey}
         </div>
+      } else{
+        return <div key={i} id={drum.drumSound} className="drum-pad" style={inactiveStyle} onClick={this.props.handleClick}>
+          <audio src={drum.source} id={drum.kbKey} className="clip" />
+                 {drum.kbKey}
+        </div>
+      }
     })
     return (
       <div id="drum-pads">
