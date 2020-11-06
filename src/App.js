@@ -72,9 +72,13 @@ class App extends React.Component {
   render() {
     const display = this.state.activeDrum.drumSound;
     return (
+      <div className="container-fluid">
+      <h1>Dakota's Drum Machine</h1>
+      <h2>Developed in React.js</h2>
       <div id="drum-machine">
       <DrumPads activeDrum={this.state.activeDrum} handleClick={this.handleClick} style={this.state.padStyle}/>
       <Display activeDrum={this.state.activeDrum} display={display}/>
+      </div>
       </div>
     );
   }
