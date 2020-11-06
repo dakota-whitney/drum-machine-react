@@ -72,7 +72,7 @@ class App extends React.Component {
   render() {
     const display = this.state.activeDrum.drumSound;
     return (
-      <div className="container-fluid">
+      <div className="container">
       <h1>Dakota's Drum Machine</h1>
       <h2>Developed in React.js</h2>
       <div id="drum-machine">
