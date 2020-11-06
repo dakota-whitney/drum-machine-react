@@ -46,6 +46,10 @@ body {
 }
 
 @media only screen and (max-width: 992px) {
+  body {
+    margin-left: 70px;
+  }
+
   #display {
     margin: 0px 0px 0px 100px;
   }
