@@ -37,7 +37,7 @@ class App extends React.Component {
   }
   componentWillUnmount(){
     document.removeEventListener('keydown', this.handleKeydown)
-    document.addEventListener('click',this.handleClick)
+    document.removeEventListener('click',this.handleClick)
   }
   handleKeydown(e){
     let drumIndex = drumKeyMap.findIndex(drum => drum.keyCode === e.code)
